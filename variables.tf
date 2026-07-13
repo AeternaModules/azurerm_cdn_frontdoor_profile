@@ -19,7 +19,7 @@ EOT
     name                     = string
     resource_group_name      = string
     sku_name                 = string
-    response_timeout_seconds = optional(number) # Default: 120
+    response_timeout_seconds = optional(number)
     tags                     = optional(map(string))
     identity = optional(object({
       identity_ids = optional(set(string))
@@ -36,14 +36,6 @@ EOT
       )
     ])
     error_message = "Each log_scrubbing_rule list must contain at most 3 items"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.cdn_frontdoor_profiles : (
-        v.response_timeout_seconds == null || (v.response_timeout_seconds >= 16 && v.response_timeout_seconds <= 240)
-      )
-    ])
-    error_message = "must be between 16 and 240"
   }
   # --- Unconfirmed validation candidates, derived from azurerm_cdn_frontdoor_profile's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
@@ -71,6 +63,9 @@ EOT
   #   source:    [from commonids.ValidateUserAssignedIdentityID] !ok
   # path: identity.identity_ids[*]
   #   source:    [from commonids.ValidateUserAssignedIdentityID] err != nil
+  # path: response_timeout_seconds
+  #   condition: value >= 16 && value <= 240
+  #   message:   must be between 16 and 240
   # path: sku_name
   #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
   # path: log_scrubbing_rule.match_variable
