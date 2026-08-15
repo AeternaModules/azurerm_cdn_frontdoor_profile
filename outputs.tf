@@ -4,7 +4,7 @@ output "cdn_frontdoor_profiles_id" {
 }
 output "cdn_frontdoor_profiles_identity" {
   description = "Map of identity values across all cdn_frontdoor_profiles, keyed the same as var.cdn_frontdoor_profiles"
-  value       = { for k, v in azurerm_cdn_frontdoor_profile.cdn_frontdoor_profiles : k => v.identity if v.identity != null && length(v.identity) > 0 }
+  value       = { for k, v in azurerm_cdn_frontdoor_profile.cdn_frontdoor_profiles : k => one(v.identity) if v.identity != null && length(v.identity) > 0 }
 }
 output "cdn_frontdoor_profiles_log_scrubbing_rule" {
   description = "Map of log_scrubbing_rule values across all cdn_frontdoor_profiles, keyed the same as var.cdn_frontdoor_profiles"
